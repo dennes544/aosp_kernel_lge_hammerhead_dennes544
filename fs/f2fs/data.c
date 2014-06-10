@@ -716,6 +716,12 @@ out:
 	return err;
 }
 
+int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+		u64 start, u64 len)
+{
+	return generic_block_fiemap(inode, fieinfo, start, len, get_data_block);
+}
+
 static int f2fs_read_data_page(struct file *file, struct page *page)
 {
 	struct inode *inode = page->mapping->host;
@@ -1048,6 +1054,9 @@ static ssize_t f2fs_direct_IO(int rw, struct kiocb *iocb,
 
 	if (check_direct_IO(inode, rw, iov, offset, nr_segs))
 		return 0;
+
+	/* clear fsync mark to recover these blocks */
+	fsync_mark_clear(F2FS_SB(inode->i_sb), inode->i_ino);
 
 	return blockdev_direct_IO(rw, iocb, inode, iov, offset, nr_segs,
 							get_data_block);
