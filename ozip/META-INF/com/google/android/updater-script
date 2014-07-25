@@ -1,0 +1,5 @@
+(getprop("ro.product.device") == "hammerhead" || getprop("ro.build.product") == "hammerhead") || abort("This package is for \"hammerhead\" devices
+this is a \"" + getprop("ro.product.device") + "\".");
+ui_print("Flashing F2FS boot.img");
+package_extract_file("boot.img", "/dev/block/platform/msm_sdcc.1/by-name/boot");
+ui_print("Enjoy F2fFS :)");
